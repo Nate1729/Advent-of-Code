@@ -15,24 +15,24 @@ fn main() {
         .map(|s| s.unwrap())
         .collect();
 
-    let mut counter_array: [i32; BIT_SIZE] = [0; BIT_SIZE];
+    let mut counter_array: [usize; BIT_SIZE] = [0; BIT_SIZE];
+    let n_rows: usize = data.len();
 
     for d in data {
         for (index, bit) in d.chars().enumerate() {
-            if bit == '0' { counter_array[index] -= 1; }
-            else if bit == '1' {counter_array[index] += 1;}
-            else {panic!("Unknown input {}", bit);}
+            if bit == '1' {
+                // If we increment by 2 we can skip having
+                // to multiply by 2 later
+                counter_array[index] += 2;
+            }
         }
-    }
-    
+    } 
+    let binary_array = counter_array.map(|d| d / n_rows);
+
     // Now we convert `counter_array` to the actual number
-    let mut gamma_rate: u16 = 0;
+    let mut gamma_rate: usize = 0;
     for i in 0..BIT_SIZE {
-        if counter_array[i] > 0 {
-            gamma_rate |= 1 << (BIT_SIZE-(i+1));
-        } else if counter_array[i] == 0 {
-            eprintln!("Error! same bits in position: {}", i);
-        }
+        gamma_rate |= binary_array[i] << (BIT_SIZE-(i+1));
     }
     
     // Flip the bits but need to set left 3 to zero
